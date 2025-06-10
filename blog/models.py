@@ -16,9 +16,6 @@ class Post(models.Model):
     tags = models.ManyToManyField(
         'Tag')
 
-    def __str__(self):
-        return self.title
-
 
 class Author(models.Model):
     first_name = models.CharField(max_length=100)
@@ -26,7 +23,7 @@ class Author(models.Model):
     email_address = models.EmailField()
 
     def __str__(self):
-        return self.name
+        return self.first_name + ' ' + self.last_name
 
 
 class Tag(models.Model):
