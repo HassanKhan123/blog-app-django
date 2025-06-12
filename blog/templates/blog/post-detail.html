@@ -20,6 +20,13 @@
 
     {% endfor %}
   </div>
+  <div id="read-later">
+    <form action="{% url "read-later" %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="post_id" value="{{post.id}}" />
+      <button>Read Later</button>
+    </form>
+  </div>
   <article>
     <img src="{{post.image.url}}" alt="Post Title" />
     <address>
@@ -33,6 +40,7 @@
 
 <main>{{post.content|linebreaks}}</main>
 
+{% if comments %}
 <section id="comments">
   <ul>
     {% for comment in comments %}
@@ -42,7 +50,9 @@
     </li>
     {% endfor %}
   </ul>
+
 </section>
+{% endif %}
 
 <section id="comment-form">
   <h2>Your Comment</h2>
