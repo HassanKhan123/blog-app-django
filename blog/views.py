@@ -29,13 +29,21 @@ class AllPostsView(ListView):
 
 class SinglePostView(View):
 
+    def is_stored_post(self, request, post_id):
+        stored_posts = request.session.get('stored_posts')
+        if stored_posts is None:
+            return False
+        return post_id in stored_posts
+
     def get(self, request, slug):
         post = Post.objects.get(slug=slug)
+
         context = {
             "post": post,
             "post_tags": post.tags.all(),
             "comment_form": CommentForm(),
             "comments": post.comments.all().order_by("-id"),
+            "saved_for_later": self.is_stored_post(request, post.id),
         }
 
         return render(request, 'blog/post-detail.html', context)
@@ -55,6 +63,7 @@ class SinglePostView(View):
             "post_tags": post.tags.all(),
             "comment_form": comment_form,
             "comments": post.comments.all().order_by("-id"),
+            "saved_for_later": self.is_stored_post(request, post.id),
 
         }
 
@@ -88,6 +97,10 @@ class ReadLaterView(View):
 
         if post_id not in stored_posts:
             stored_posts.append(post_id)
-            request.session['stored_posts'] = stored_posts
+
+        else:
+            stored_posts.remove(post_id)
+
+        request.session['stored_posts'] = stored_posts
 
         return HttpResponseRedirect("/")
